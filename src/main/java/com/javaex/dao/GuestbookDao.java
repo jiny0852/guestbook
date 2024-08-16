@@ -11,12 +11,6 @@ import java.util.List;
 import com.javaex.vo.PersonVo;
 
 public class GuestbookDao {
-	
-	
-	/*
-	심각: 경로가 [/guestbook]인 컨텍스트의 서블릿 [com.javaex.controller.GuestbookController]을(를) 위한 Servlet.service() 호출이 예외를 발생시켰습니다.
-java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatement(String)" because "this.conn" is null
-	 */
 
 	// 필드
 
@@ -42,13 +36,16 @@ java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatem
 	private void getConnection() {
 
 		try {
+			System.out.println("여기2");
 			// 1. JDBC 드라이버 (Oracle) 로딩
 			Class.forName(driver);
 
 			// 2. Connection 얻어오기
 			conn = DriverManager.getConnection(url, id, pw);
+			System.out.println("여기3");
 
 		} catch (ClassNotFoundException e) {
+			System.out.println("여기4");
 			System.out.println("error: 드라이버 로딩 실패 - " + e);
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
@@ -244,7 +241,7 @@ java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatem
 			// - sql문 준비
 			String query = "";
 			query += " insert into person ";
-			query += " values ( null, ?, ?, ?, null ) "; 
+			query += " values ( null, ?, ?, ?, now() ) "; 
 			
 			// - 바인딩
 			pstmt = conn.prepareStatement(query);
@@ -289,7 +286,7 @@ java.lang.NullPointerException: Cannot invoke "java.sql.Connection.prepareStatem
 			query += " select   no, ";
 			query += " 			name, ";
 			query += " 		    password, ";
-			query += " 	        content ";
+			query += " 	        content, ";
 			query += " 	        reg_date ";
 			query += " from person ";
 			

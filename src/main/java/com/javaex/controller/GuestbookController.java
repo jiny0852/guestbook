@@ -52,8 +52,7 @@ public class GuestbookController extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/addList.jsp");
 			rd.forward(request, response);
 			
-			
-			
+
 		} else if ( "writeform".equals(action) ) {
 			
 			System.out.println("등록 시작 : writeForm 요청"); // 업무보고   
@@ -65,15 +64,21 @@ public class GuestbookController extends HttpServlet {
 			
 		} else if ( "insert".equals(action) ) {
 			
-			System.out.println("등록 요청 데이터 3개 저장해줘"); // 업무보고
+			System.out.println("등록 요청 데이터 4개 저장해줘"); // 업무보고
 			
+			PersonVo personVo = new PersonVo( request.getParameter("name"),
+											  request.getParameter("password"),
+											  request.getParameter("content"),
+											  request.getParameter("regDate")	);
+			
+			/*
 			PersonVo personVo = new PersonVo();
-		
+
 			personVo.setName(request.getParameter("name"));
 			personVo.setPassword(request.getParameter("password"));
 			personVo.setContent(request.getParameter("content"));
 			personVo.setRegDate(request.getParameter("regDate"));
-			
+			*/
 			System.out.println("controller" + personVo);
 			
 			
@@ -86,32 +91,69 @@ public class GuestbookController extends HttpServlet {
 			//리다이렉트
 			response.sendRedirect("http://localhost:8080/guestbook/gbc?action=list");
 			
+		
 			
+		} else if ( "deleteform".equals(action) ) {
 			
-		} else if ( "editform".equals(action) ) {
+			System.out.println("삭제 시작 : deleteForm 요청"); // 업무보고   
 			
-			System.out.println("정보 수정 !!! 폼 !!! 시작");
 			int no = Integer.parseInt(request.getParameter("no"));
-			System.out.println("no : " + no);
+			System.out.println("삭제할 no : " + no);
+			
+			//getPersonOne(no) 로 1명의 데이터 주소를 가져온다
+			//PersonVo personVo = guestbookDao.getPersonOne(no);
+			
+			//System.out.println("Con - getPersonOne : " + personVo);
+			GuestbookDao guestbookDao = new GuestbookDao();
+			PersonVo personVo = guestbookDao.getPersonOne(no);
+			//화면+데이터 수정폼
+			//리퀘스트 어트리부트 영역에 personVo 주소를 담는다
+			//request.setAttribute("personVo", personVo);
+			request.setAttribute("personVo", personVo);
+			
+			//포워드
+			//컨트롤러가 포워드할떄 파라미터 값을 넣어주지 않아도 됨
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/deleteForm.jsp");
+			rd.forward(request, response);
+			
+			
+		} else if ( "delete".equals(action) ) {
+			
+			System.out.println("삭제");
+			
+			//파라미터 꺼내기
+			int no = Integer.parseInt(request.getParameter("no"));
+			String password = request.getParameter("password");
 			
 			//Dao를 메모리에 올린다
 			GuestbookDao guestbookDao = new GuestbookDao();
 			
-			//getPersonOne(no) 로 1명의 데이터 주소를 가져온다
-			PersonVo personVo = guestbookDao.getPersonOne(no);
+			//phonebookDao를 통해서 삭제delete를 시킨다
+			guestbookDao.deletePerson(no, password);
 			
-			System.out.println("Con - getPersonOne : " + personVo);
-			
-			//화면+데이터 수정폼
-			//리퀘스트 어트리부트 영역에 personVo 주소를 담는다
-			request.setAttribute("personVo", personVo);
-			
-			//포워드 editform.jsp
-			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/editForm.jsp");
-			rd.forward(request, response);
+			//리다이렉트 시킨다
+			response.sendRedirect("/guestbook/gbc?action=list");
 			
 			
-		} else if ( "update".equals(action) ) {
+		} else {
+			System.out.println("action 없음");
+		}
+		
+		
+	}
+
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		doGet(request, response);
+		
+	}
+
+}
+
+
+/*	
+} else if ( "update".equals(action) ) {
 			
 			System.out.println("수정");
 			
@@ -136,35 +178,67 @@ public class GuestbookController extends HttpServlet {
 			response.sendRedirect("/guestbook/gbc?action=addList");
 			
 			
-			
-		} else if ( "delete".equals(action) ) {
-			
-			System.out.println("수정");
-			
-			//파라미터 꺼내기
-			int no = Integer.parseInt(request.getParameter("no"));
-			String password = request.getParameter("password");
-			
-			//Dao를 메모리에 올린다
-			GuestbookDao guestbookDao = new GuestbookDao();
-			
-			//phonebookDao를 통해서 삭제delete를 시킨다
-			guestbookDao.deletePerson(no, password);
-			
-			//리다이렉트 시킨다
-			response.sendRedirect("/guestbook/gbc?action=addList");
-			
-			
-		}
-		
-		
-	}
 
+} else if ( "writeform".equals(action) ) {
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		doGet(request, response);
-		
-	}
+	System.out.println("등록 시작 : writeForm 요청"); // 업무보고   
+	
+	//포워드
+	RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/writeForm.jsp");
+	rd.forward(request, response);
+	
+	
+} else if ( "insert".equals(action) ) {
+	
+	System.out.println("등록 요청 데이터 4개 저장해줘"); // 업무보고
+	
+	PersonVo personVo = new PersonVo( request.getParameter("name"),
+									  request.getParameter("password"),
+									  request.getParameter("content"),
+									  request.getParameter("regDate")	);
+	
+	/*
+	PersonVo personVo = new PersonVo();
 
-}
+	personVo.setName(request.getParameter("name"));
+	personVo.setPassword(request.getParameter("password"));
+	personVo.setContent(request.getParameter("content"));
+	personVo.setRegDate(request.getParameter("regDate"));
+	
+	System.out.println("controller" + personVo);
+	
+	
+	
+	//dao를 메모리에 올린다
+	//insertPerson(personVo) 사용해서 db에 저장한다
+	GuestbookDao guestbookDao = new GuestbookDao();
+	guestbookDao.insertPerson(personVo);
+	
+	//리다이렉트
+	response.sendRedirect("http://localhost:8080/guestbook/gbc?action=list");
+	
+	
+	
+} else if ( "editform".equals(action) ) {
+	
+	System.out.println("정보 수정 !!! 폼 !!! 시작");
+	int no = Integer.parseInt(request.getParameter("no"));
+	System.out.println("no : " + no);
+	
+	//Dao를 메모리에 올린다
+	GuestbookDao guestbookDao = new GuestbookDao();
+	
+	//getPersonOne(no) 로 1명의 데이터 주소를 가져온다
+	PersonVo personVo = guestbookDao.getPersonOne(no);
+	
+	System.out.println("Con - getPersonOne : " + personVo);
+	
+	//화면+데이터 수정폼
+	//리퀘스트 어트리부트 영역에 personVo 주소를 담는다
+	request.setAttribute("personVo", personVo);
+	
+	//포워드 editform.jsp
+	RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/editForm.jsp");
+	rd.forward(request, response);
+	
+*/	

@@ -13,6 +13,13 @@ public class PersonVo {
 	//생성자
 	public PersonVo() {
 	}
+	public PersonVo(String name, String password, String content, String regDate) {
+		super();
+		this.name = name;
+		this.password = password;
+		this.content = content;
+		this.regDate = regDate;
+	}
 	public PersonVo(int no, String name, String password, String content, String regDate) {
 		super();
 		this.no = no;

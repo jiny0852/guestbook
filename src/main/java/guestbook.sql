@@ -58,7 +58,7 @@ from person
 
 -- 등록
 insert into person
-values(null, '정우성', '010-1111-1111', '02-1111-1111')
+values(null, '정우성', '1234', '안녕하세요', now())
 ;
 
 
